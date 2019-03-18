@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import './profile.dart';
+import './messages.dart';
+import './dashboard.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,17 +14,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            FirebaseAuth.instance.signOut().then((value) {
-              Navigator.of(context).pushReplacementNamed('/');
-            }).catchError((e) {
-              print(e);
-            });
-          },
-          child: Text('Back'),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.deepOrange[300],
+          elevation: 7.0,
+          child: TabBar(
+            tabs: <Widget>[
+              Tab(icon: Icon(Icons.home)),
+              Tab(icon: Icon(Icons.message)),
+              Tab(
+                icon: Icon(Icons.portrait),
+              )
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: <Widget>[DashboardPage(), MessagePage(), ProfilePage()],
         ),
       ),
     );

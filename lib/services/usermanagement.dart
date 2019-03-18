@@ -6,9 +6,9 @@ class UserManagement {
       'email': user.email,
       'uid': user.uid
     }).then((value) {
+      //Navigator.of(context).pop();
+      //Navigator.of(context).pushReplacementNamed('/home');
       Navigator.of(context).pop();
-      Navigator.of(context).pushReplacementNamed('/home');
-
     }).catchError((e) {
       print(e);
     });

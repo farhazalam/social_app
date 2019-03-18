@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import './services/usermanagement.dart';
+
 class SignupPage extends StatefulWidget {
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -10,6 +11,10 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   String _email = '';
   String _password = '';
+  String _name = '';
+  String _photourl =
+      'https://imagesvc.timeincapp.com/v3/fan/image?url=https%3A%2F%2Fculturess.com%2Ffiles%2F2018%2F04%2Ftony-stark.jpg&c=sc&w=850&h=560';
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +57,11 @@ class _SignupPageState extends State<SignupPage> {
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.bold,
                           color: Colors.grey)),
+                  onChanged: (value) {
+                    setState(() {
+                      _name = value;
+                    });
+                  },
                 ),
                 SizedBox(
                   height: 15.0,
@@ -96,11 +106,10 @@ class _SignupPageState extends State<SignupPage> {
                     onPressed: () {
                       FirebaseAuth.instance
                           .createUserWithEmailAndPassword(
-                          email: _email, password: _password)
+                              email: _email, password: _password)
                           .then((signedInUser) {
-                        UserManagement().storeNewUser(signedInUser,context);
-                      })
-                          .catchError((e) {
+                        UserManagement().storeNewUser(signedInUser, context);
+                      }).catchError((e) {
                         print(e);
                       });
                     },
@@ -137,4 +146,13 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
+  /*updateUserProfile(UserUpdateInfo userUpdateInfo) async {
+    FirebaseUser user = await _auth.currentUser();
+    await user.updateProfile(userUpdateInfo).then((user){
+      _auth.currentUser().then((user) {
+        UserManagement().storeUser(user, context);
+      }).catchError((e) {
+        print(e.toString());
+      });
+    });*/
 }
