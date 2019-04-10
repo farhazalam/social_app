@@ -7,18 +7,20 @@ import './firebase/CRUD.dart';
 class EditPage extends StatefulWidget {
   final Map<String, dynamic> _userData;
   EditPage(this._userData);
-  
+
   @override
   _EditPageState createState() => _EditPageState(_userData);
 }
 
 class _EditPageState extends State<EditPage> {
-  final Map<String, dynamic> _userData;
+  Map<String, dynamic> _userData;
+
   _EditPageState(this._userData);
+
   String id;
   final db = Firestore.instance;
-  final _formkey = GlobalKey<FormState>();
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, dynamic> _newUserData = {
     'name': '',
     'location': '',
@@ -36,15 +38,16 @@ class _EditPageState extends State<EditPage> {
   }
 
   Future<Null> editData(BuildContext context) async {
-    if (_formkey.currentState.validate()) {
-      _formkey.currentState.save();
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
       _currentUser = await FirebaseAuth.instance.currentUser();
       await _crudFunctions.updateUserName(
           uid: _currentUser.uid,
           newName: this._newUserData['name'],
           newGender: this._newUserData['gender'],
           newLocation: this._newUserData['location']);
- 
+      print('DATA OLD $_userData');
+      print('DATA NEW $_newUserData');
       Navigator.of(context).pop();
     }
   }
@@ -71,67 +74,70 @@ class _EditPageState extends State<EditPage> {
             )
           ],
         ),
-        body: ListView(
-          children: <Widget>[
-            SizedBox(
-              height: 25,
-            ),
-            Container(
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/dp.jpg'),
-                      radius: 62,
-                    ),
-                  ),
-                  Container(
-                    child: FloatingActionButton(
-                      onPressed: () {},
-                      mini: true,
-                      tooltip: 'Change Photo',
-                      child: Icon(
-                        Icons.edit,
-                        color: Colors.deepOrange,
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              SizedBox(
+                height: 25,
+              ),
+              Container(
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.center,
+                      child: CircleAvatar(
+                        backgroundImage: AssetImage('assets/dp.jpg'),
+                        radius: 62,
                       ),
-                      backgroundColor: Colors.white,
                     ),
-                    padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 2 + 21, 85, 0, 0),
-                  )
-                ],
+                    Container(
+                      child: FloatingActionButton(
+                        onPressed: () {},
+                        mini: true,
+                        tooltip: 'Change Photo',
+                        child: Icon(
+                          Icons.edit,
+                          color: Colors.deepOrange,
+                        ),
+                        backgroundColor: Colors.white,
+                      ),
+                      padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.width / 2 + 21, 85, 0, 0),
+                    )
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            Container(
+              SizedBox(
+                height: 25,
+              ),
+              Container(
                 padding: EdgeInsets.all(20),
-                child: Form(
-                  key: _formkey,
-                  child: buildTextFieldName(),
-                )),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: TextFormField(
-                decoration: InputDecoration(labelText: 'Location'),
-                onSaved: (value) {setState(() {
-                  _newUserData['location'] = value;
-                });} ,
-                
-                initialValue: _userData['location'],
+                child: buildTextFieldName(),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: TextFormField(
-                decoration: InputDecoration(labelText: 'Gender'),
-                onSaved: (value) => _newUserData['gender'] = value,
-                initialValue: _userData['gender'],
+              Container(
+                padding: EdgeInsets.all(20),
+                child: TextFormField(
+                  decoration: InputDecoration(labelText: 'Location'),
+                  onSaved: (value) {
+                    
+                      _newUserData['location'] = value;
+                      print(_newUserData['location']);
+                   
+                  },
+                  initialValue: _userData['location'],
+                ),
               ),
-            ),
-          ],
+              Container(
+                padding: EdgeInsets.all(20),
+                child: TextFormField(
+                  decoration: InputDecoration(labelText: 'Gender'),
+                  onSaved: (value) => _newUserData['gender'] = value,
+                  initialValue: _userData['gender'],
+                ),
+              ),
+            ],
+          ),
         ));
   }
 }
