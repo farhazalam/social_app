@@ -1,13 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import './auth.dart';
 import './signup.dart';
 import './home.dart';
 import './messages.dart';
 import './profile.dart';
+import './edit.dart';
 
-void main() => runApp(MyApp());
+void main() {
+// FirebaseUser _currentuser=await FirebaseAuth.instance.currentUser();
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,14 +22,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (BuildContext context)=>LoginPage(),
-        '/signup': (BuildContext context) =>SignupPage(),
-        '/home':(BuildContext context) => HomePage(),
-        '/messagepage':(BuildContext context ) => MessagePage(),
-        '/profilepage':(BuildContext context ) => ProfilePage(),
+        '/': (BuildContext context) => LoginPage(),
+        '/signup': (BuildContext context) => SignupPage(),
+        '/messagepage': (BuildContext context) => MessagePage(),
+       // '/editpage': (BuildContext context) => EditPage(),
       },
-
     );
   }
-  
 }

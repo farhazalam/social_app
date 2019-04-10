@@ -7,6 +7,8 @@ import './messages.dart';
 import './dashboard.dart';
 
 class HomePage extends StatefulWidget {
+  final FirebaseUser user;
+  HomePage(this.user); 
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -31,7 +33,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         body: TabBarView(
-          children: <Widget>[DashboardPage(), MessagePage(), ProfilePage()],
+          children: <Widget>[DashboardPage(), MessagePage(), ProfilePage(widget.user)],
         ),
       ),
     );

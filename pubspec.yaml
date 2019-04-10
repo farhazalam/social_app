@@ -43,9 +43,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #  - images/a_dot_burr.jpeg
-  #  - images/a_dot_ham.jpeg
+  assets:
+    - assets/dp.jpg
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
@@ -61,9 +61,9 @@ flutter:
   fonts:
     - family: Montserrat
       fonts:
-        - asset: assets/Montserrat-Bold.ttf
-        - asset: assets/Montserrat-Regular.ttf
-          weight: 700
+       - asset: assets/Montserrat-Bold.ttf
+       - asset: assets/Montserrat-Regular.ttf
+         weight: 700
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
