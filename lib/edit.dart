@@ -1,11 +1,15 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:image_picker/image_picker.dart';
 import './firebase/CRUD.dart';
 
 class EditPage extends StatefulWidget {
   final Map<String, dynamic> _userData;
+
   EditPage(this._userData);
 
   @override
@@ -14,9 +18,9 @@ class EditPage extends StatefulWidget {
 
 class _EditPageState extends State<EditPage> {
   Map<String, dynamic> _userData;
-
+  String urldata;
   _EditPageState(this._userData);
-
+  File _image;
   String id;
   final db = Firestore.instance;
 
@@ -29,11 +33,80 @@ class _EditPageState extends State<EditPage> {
   CRUD _crudFunctions = CRUD();
   FirebaseUser _currentUser;
 
-  TextFormField buildTextFieldName() {
-    return TextFormField(
-      decoration: InputDecoration(labelText: 'Name'),
-      onSaved: (value) => _newUserData['name'] = value,
-      initialValue: _userData['name'],
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
+    });
+  }
+
+  Widget photoField() {
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.center,
+            child: CircleAvatar(
+              backgroundImage: 
+                   NetworkImage(_userData['url']),
+                 
+              radius: 62,
+            ),
+          ),
+          Container(
+            child: FloatingActionButton(
+              onPressed: () {
+                getImage();
+              },
+              mini: true,
+              tooltip: 'Change Photo',
+              child: Icon(
+                Icons.edit,
+                color: Colors.deepOrange,
+              ),
+              backgroundColor: Colors.white,
+            ),
+            padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width / 2 + 21, 85, 0, 0),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget nameField() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: TextFormField(
+        decoration: InputDecoration(labelText: 'Name'),
+        onSaved: (value) => _newUserData['name'] = value,
+        initialValue: _userData['name'],
+      ),
+    );
+  }
+
+  Widget locationField() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: TextFormField(
+        decoration: InputDecoration(labelText: 'Location'),
+        onSaved: (value) {
+          _newUserData['location'] = value;
+          print(_newUserData['location']);
+        },
+        initialValue: _userData['location'],
+      ),
+    );
+  }
+
+  Widget genderField() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: TextFormField(
+        decoration: InputDecoration(labelText: 'Gender'),
+        onSaved: (value) => _newUserData['gender'] = value,
+        initialValue: _userData['gender'],
+      ),
     );
   }
 
@@ -41,13 +114,22 @@ class _EditPageState extends State<EditPage> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       _currentUser = await FirebaseAuth.instance.currentUser();
+
+      String uid = _currentUser.uid;
+      StorageReference ref = FirebaseStorage.instance.ref().child(uid);
+      StorageUploadTask uploadTask = ref.putFile(_image);
+
+      var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+      urldata = dowurl.toString();
+
       await _crudFunctions.updateUserName(
-          uid: _currentUser.uid,
-          newName: this._newUserData['name'],
-          newGender: this._newUserData['gender'],
-          newLocation: this._newUserData['location']);
-      print('DATA OLD $_userData');
-      print('DATA NEW $_newUserData');
+        uid: _currentUser.uid,
+        newName: this._newUserData['name'],
+        newGender: this._newUserData['gender'],
+        newLocation: this._newUserData['location'],
+        newUrl: this.urldata,
+      );
+
       Navigator.of(context).pop();
     }
   }
@@ -81,61 +163,13 @@ class _EditPageState extends State<EditPage> {
               SizedBox(
                 height: 25,
               ),
-              Container(
-                child: Stack(
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.center,
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage('assets/dp.jpg'),
-                        radius: 62,
-                      ),
-                    ),
-                    Container(
-                      child: FloatingActionButton(
-                        onPressed: () {},
-                        mini: true,
-                        tooltip: 'Change Photo',
-                        child: Icon(
-                          Icons.edit,
-                          color: Colors.deepOrange,
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                      padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.width / 2 + 21, 85, 0, 0),
-                    )
-                  ],
-                ),
-              ),
+              photoField(),
               SizedBox(
                 height: 25,
               ),
-              Container(
-                padding: EdgeInsets.all(20),
-                child: buildTextFieldName(),
-              ),
-              Container(
-                padding: EdgeInsets.all(20),
-                child: TextFormField(
-                  decoration: InputDecoration(labelText: 'Location'),
-                  onSaved: (value) {
-                    
-                      _newUserData['location'] = value;
-                      print(_newUserData['location']);
-                   
-                  },
-                  initialValue: _userData['location'],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.all(20),
-                child: TextFormField(
-                  decoration: InputDecoration(labelText: 'Gender'),
-                  onSaved: (value) => _newUserData['gender'] = value,
-                  initialValue: _userData['gender'],
-                ),
-              ),
+              nameField(),
+              locationField(),
+              genderField(),
             ],
           ),
         ));

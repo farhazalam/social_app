@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import './edit.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfilePage extends StatefulWidget {
   final FirebaseUser user;
@@ -19,7 +20,129 @@ class _ProfilePageState extends State<ProfilePage> {
     'email': '',
     'location': '',
     'gender': '',
+    'url': ''
   };
+
+  Widget profileUiImage() {
+    return Container(
+      child: _userData['url'] == ''
+          ? Center(child: Text('Loading'))
+          : Image.network(_userData['url']),
+    );
+  }
+
+  Widget profileUiName() {
+    return Container(
+      child: Text(
+        _userData["name"],
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(color: Color.fromARGB(200, 0, 0, 0), offset: Offset(3, 3))
+            ]),
+      ),
+      padding: EdgeInsets.fromLTRB(21, 230, 0, 0),
+    );
+  }
+
+  Widget profileUiEditButton() {
+    return Container(
+        padding: EdgeInsets.fromLTRB(330, 242, 0, 0),
+        child: FloatingActionButton(
+          onPressed: () async {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (BuildContext context) {
+              return EditPage(_userData);
+            }));
+          },
+          child: Icon(Icons.edit),
+          tooltip: 'Edit',
+        ));
+  }
+
+  Widget profileUi() {
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          profileUiImage(),
+          profileUiName(),
+          profileUiEditButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget emailDisplay() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      child: ListTile(
+        title: Text(
+          'EMAIL',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        subtitle: Text(
+          _userData['email'],
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  Widget locationDisplay() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      child: ListTile(
+        title: Text(
+          'LOCATION',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        subtitle: Text(
+          _userData['location'],
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  Widget genderDisplay() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      child: ListTile(
+        title: Text(
+          'GENDER',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        subtitle: Text(
+          _userData['gender'],
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  Widget logoutButton() {
+    return Center(
+      child: RaisedButton(
+        onPressed: () {
+          FirebaseAuth.instance.signOut().then((value) {
+            Navigator.of(context).pushReplacementNamed('/');
+          }).catchError((e) {
+            print(e);
+          });
+        },
+        child: Text(
+          'LOGOUT',
+          style: TextStyle(color: Colors.white),
+        ),
+        color: Colors.red,
+        elevation: 07,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,116 +164,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   _userData['email'] = snapshot.data['email'];
                   _userData['location'] = snapshot.data['location'];
                   _userData['gender'] = snapshot.data['gender'];
+                  _userData['url'] = snapshot.data['url'];
                   return ListView(
                     //crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container(
-                        child: Stack(
-                          children: <Widget>[
-                            Container(
-                              child: Image.asset('assets/dp.jpg'),
-                            ),
-                            Container(
-                              child: Text(
-                                _userData["name"],
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                    shadows: [
-                                      Shadow(
-                                          color: Color.fromARGB(200, 0, 0, 0),
-                                          offset: Offset(3, 3))
-                                    ]),
-                              ),
-                              padding: EdgeInsets.fromLTRB(21, 230, 0, 0),
-                            ),
-                            Container(
-                                padding: EdgeInsets.fromLTRB(330, 242, 0, 0),
-                                child: FloatingActionButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) {
-                                      return EditPage(_userData);
-                                    }));
-                                  },
-                                  child: Icon(Icons.edit),
-                                  tooltip: 'Edit',
-                                ))
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        child: ListTile(
-                          title: Text(
-                            'EMAIL',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          ),
-                          subtitle: Text(
-                            _userData['email'],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
+                      profileUi(),
+                      emailDisplay(),
                       SizedBox(
                         height: 04,
                       ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        child: ListTile(
-                          title: Text(
-                            'LOCATION',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          ),
-                          subtitle: Text(
-                            _userData['location'],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
+                      locationDisplay(),
                       SizedBox(
                         height: 05,
                       ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        child: ListTile(
-                          title: Text(
-                            'GENDER',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          ),
-                          subtitle: Text(
-                            _userData['gender'],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
+                      genderDisplay(),
                       SizedBox(
                         height: 30,
                       ),
-                      Center(
-                        child: RaisedButton(
-                          onPressed: () {
-                            FirebaseAuth.instance.signOut().then((value) {
-                              Navigator.of(context).pushReplacementNamed('/');
-                            }).catchError((e) {
-                              print(e);
-                            });
-                          },
-                          child: Text(
-                            'LOGOUT',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          color: Colors.red,
-                          elevation: 07,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30)),
-                        ),
-                      )
+                      logoutButton(),
                     ],
                   );
               }

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import './firebase/CRUD.dart';
 import './home.dart';
 
@@ -16,7 +19,8 @@ class _SignupPageState extends State<SignupPage> {
   String _location = '';
   String _gender = '';
   CRUD _crudFunctions = CRUD();
-
+  File _image;
+  String url;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Widget _designUI() {
@@ -173,6 +177,13 @@ class _SignupPageState extends State<SignupPage> {
               .catchError((e) {
             print(e.toString());
           });
+          String uid = _currentUser.uid;
+          StorageReference ref = FirebaseStorage.instance.ref().child(uid);
+          StorageUploadTask uploadTask = ref.putFile(_image);
+
+          var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+          url = dowurl.toString();
+
 
           await _crudFunctions.uploadUserInfo(
             uid: _currentUser.uid,
@@ -180,7 +191,12 @@ class _SignupPageState extends State<SignupPage> {
             email: _currentUser.email,
             location: this._location,
             gender: this._gender,
+            url: url
           );
+
+          //FirebaseStorage.instance.ref().child(uid).putFile(_image);
+
+          print(url);
 
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (BuildContext context) {
@@ -213,6 +229,48 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
+    });
+  }
+
+  Widget photoField() {
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.center,
+            child: CircleAvatar(
+              backgroundColor: Colors.orange,
+              backgroundImage: _image == null
+                  ? AssetImage('assets/dp.jpg')
+                  : FileImage(_image),
+              radius: 62,
+            ),
+          ),
+          Container(
+            child: FloatingActionButton(
+              onPressed: () {
+                getImage();
+              },
+              mini: true,
+              tooltip: 'Change Photo',
+              child: Icon(
+                Icons.edit,
+                color: Colors.deepOrange,
+              ),
+              backgroundColor: Colors.white,
+            ),
+            padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width / 2 + 15, 75, 0, 0),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -226,6 +284,10 @@ class _SignupPageState extends State<SignupPage> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
+                  SizedBox(
+                    height: 15,
+                  ),
+                  photoField(),
                   _nameField(),
                   SizedBox(
                     height: 15.0,

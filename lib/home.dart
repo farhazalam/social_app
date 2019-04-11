@@ -8,6 +8,7 @@ import './dashboard.dart';
 
 class HomePage extends StatefulWidget {
   final FirebaseUser user;
+
   HomePage(this.user); 
   @override
   _HomePageState createState() => _HomePageState();

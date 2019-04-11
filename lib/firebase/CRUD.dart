@@ -9,20 +9,30 @@ class CRUD {
       @required String name,
       @required String email,
       @required String location,
-      @required String gender}) async {
+      @required String gender,
+      @required String url}) async {
     Map<String, dynamic> _userData = {
       'name': name,
       'email': email,
       'location': location,
       'gender': gender,
+      'url': url
     };
     await database.collection("USER").document(uid).setData(_userData);
   }
 
   Future<Null> updateUserName(
-      {@required String uid, @required String newName,@required String newGender,@required String newLocation}) async {
-  
-    Map<String, String> _newData = {'name': newName,'gender': newGender,'location': newLocation};
+      {@required String uid,
+      @required String newName,
+      @required String newGender,
+      @required String newLocation,
+      @required String newUrl}) async {
+    Map<String, String> _newData = {
+      'name': newName,
+      'gender': newGender,
+      'location': newLocation,
+      'url': newUrl
+    };
 
     await database
         .collection("USER")

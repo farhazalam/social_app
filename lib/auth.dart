@@ -118,10 +118,12 @@ class _LoginPageState extends State<LoginPage> {
           if (_currentUser == null)
             print("USER is null");
           else
+          { CircularProgressIndicator();
             Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (BuildContext context) {
               return HomePage(_currentUser);
             }));
+          }
         },
         elevation: 7.0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
@@ -138,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
       height: 50,
       child: RaisedButton(
         onPressed: () {
-          Navigator.of(context).pushReplacementNamed('/signup');
+          Navigator.of(context).pushNamed('/signup');
         },
         elevation: 7.0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
