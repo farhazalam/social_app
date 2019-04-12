@@ -312,6 +312,7 @@ class _SignupPageState extends State<SignupPage> {
                   SizedBox(
                     height: 15,
                   ),
+                  backButton(),
                   SizedBox(height: 100)
                 ],
               ),

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import './edit.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 
 class ProfilePage extends StatefulWidget {
   final FirebaseUser user;
@@ -27,7 +27,8 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       child: _userData['url'] == ''
           ? Center(child: Text('Loading'))
-          : Image.network(_userData['url']),
+          : Image.network(_userData['url'],height: 300,width: MediaQuery.of(context).size.width,fit: BoxFit.fitWidth,),
+    decoration: BoxDecoration(color: Colors.deepOrange[100]),
     );
   }
 

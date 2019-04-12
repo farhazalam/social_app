@@ -18,7 +18,7 @@ class EditPage extends StatefulWidget {
 
 class _EditPageState extends State<EditPage> {
   Map<String, dynamic> _userData;
-  String urldata;
+
   _EditPageState(this._userData);
   File _image;
   String id;
@@ -32,11 +32,14 @@ class _EditPageState extends State<EditPage> {
   };
   CRUD _crudFunctions = CRUD();
   FirebaseUser _currentUser;
-
+  bool isClicked = false;
+  String urldata;
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
+      // isClicked = true;
+      //urldata=_userData['url'];
     });
   }
 
@@ -47,9 +50,7 @@ class _EditPageState extends State<EditPage> {
           Container(
             alignment: Alignment.center,
             child: CircleAvatar(
-              backgroundImage: 
-                   NetworkImage(_userData['url']),
-                 
+              backgroundImage: NetworkImage(_userData['url']),
               radius: 62,
             ),
           ),
@@ -122,6 +123,10 @@ class _EditPageState extends State<EditPage> {
       var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
       urldata = dowurl.toString();
 
+      // if(isClicked==false)
+      // {
+      //   urldata=_userData['url'];
+      // }
       await _crudFunctions.updateUserName(
         uid: _currentUser.uid,
         newName: this._newUserData['name'],
