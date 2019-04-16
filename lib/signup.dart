@@ -76,7 +76,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget _passwordField() {
     return TextFormField(
       decoration: InputDecoration(
-          labelText: 'PASSWORD',
+          labelText: 'PASSWORD.',
           labelStyle: TextStyle(
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.bold,
