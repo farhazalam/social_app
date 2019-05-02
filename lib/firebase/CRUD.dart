@@ -12,6 +12,7 @@ class CRUD {
       @required String gender,
       @required String url}) async {
     Map<String, dynamic> _userData = {
+      'id':uid,
       'name': name,
       'email': email,
       'location': location,

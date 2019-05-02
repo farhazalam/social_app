@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import './auth.dart';
 import './signup.dart';
 
-import './messages.dart';
+
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+
+}
+
+class _MyAppState extends State<MyApp> {
+
+  final FirebaseMessaging _messaging=FirebaseMessaging();
+  @override
+  void initState() {
+     super.initState();
+    _messaging.getToken().then((token){print(token);});
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,37 +33,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (BuildContext context) => LoginPage(),
         '/signup': (BuildContext context) => SignupPage(),
-        '/messagepage': (BuildContext context) => MessagePage(),
+       // '/messagepage': (BuildContext context) => MessagePage(),
         // '/editpage': (BuildContext context) => EditPage(),
       },
 
-//home: inputData(),
     );
   }
-  // void inputData() async {
-  //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  //   final uid = user.uid;
-  //   FutureBuilder<FirebaseUser>(
-  //    future: FirebaseAuth.instance.currentUser(),
-
-  //    builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
-
-  //       switch (snapshot.connectionState) {
-  //           case ConnectionState.none:
-  //           case ConnectionState.waiting:
-  //              return CircularProgressIndicator();
-  //           default:
-  //              if (snapshot.hasError)
-  //                 return Text('Error: ${snapshot.error}');
-  //              else
-  //                if(snapshot.data == null)
-  //                   return LoginPage();
-  //                else
-  //                   return HomePage(user);
-  //       }
-
-  //    }
-  // );
-
-  // }
 }

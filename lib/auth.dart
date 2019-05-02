@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import './home.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,10 +14,38 @@ class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  SharedPreferences prefs;
+  bool isLoading = false;
+  bool isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
+    isSignedIn();
+  }
+
+  Future<FirebaseUser> getUser() async {
+    return await FirebaseAuth.instance.currentUser();
+  }
+
+  void isSignedIn() async {
+    this.setState(() {
+      isLoading = true;
+    });
+    prefs = await SharedPreferences.getInstance();
+
+    getUser().then((user) {
+      if (user != null) {
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
+          return HomePage(user);
+        }));
+      }
+    });
+
+    this.setState(() {
+      isLoading = false;
+    });
   }
 
   Widget _topdesignUI() {
@@ -107,18 +137,46 @@ class _LoginPageState extends State<LoginPage> {
           if (!_formKey.currentState.validate()) {
             return;
           }
-
+          this.setState(() {
+            isLoading = true;
+          });
           _formKey.currentState.save();
-       //   CircularProgressIndicator();
           FirebaseUser _currentUser = await FirebaseAuth.instance
               .signInWithEmailAndPassword(email: _email, password: _password)
               .catchError((e) {
+            Fluttertoast.showToast(msg: 'Enter Correct Details');
+            this.setState(() {
+              isLoading = false;
+            });
             print(e.toString());
+          });
+          StreamBuilder(
+            stream: Firestore.instance
+                .collection('USER')
+                .document(_currentUser.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor),
+                  ),
+                );
+              } else {
+                prefs.setString('id', snapshot.data['id']);
+                prefs.setString('name', snapshot.data['name']);
+                prefs.setString('url', snapshot.data['url']);
+              }
+            },
+          );
+          Fluttertoast.showToast(msg: 'You are logged in');
+          this.setState(() {
+            isLoading = false;
           });
           if (_currentUser == null)
             print("USER is null");
-          else
-          { CircularProgressIndicator();
+          else {
             Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (BuildContext context) {
               return HomePage(_currentUser);
@@ -178,6 +236,20 @@ class _LoginPageState extends State<LoginPage> {
                     height: 15,
                   ),
                   _signupButton(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Center(
+                      child: isLoading == true
+                          ? Container(
+                              color: Colors.white.withOpacity(0.8),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Theme.of(context).primaryColor)),
+                              ),
+                            )
+                          : Container())
                 ],
               ),
             ),

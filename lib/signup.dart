@@ -1,11 +1,12 @@
 import 'dart:io';
-
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import './firebase/CRUD.dart';
 import './home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -13,6 +14,8 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  bool isloading = false;
+  SharedPreferences prefs;
   String _email = '';
   String _password = '';
   String _name = '';
@@ -169,12 +172,18 @@ class _SignupPageState extends State<SignupPage> {
           if (!_formKey.currentState.validate()) {
             return;
           }
-
+          this.setState(() {
+            isloading = true;
+          });
           _formKey.currentState.save();
           FirebaseUser _currentUser = await FirebaseAuth.instance
               .createUserWithEmailAndPassword(
                   email: _email, password: _password)
               .catchError((e) {
+            this.setState(() {
+              isloading = false;
+            });
+            Fluttertoast.showToast(msg: 'Incorrect Details');
             print(e.toString());
           });
           String uid = _currentUser.uid;
@@ -183,21 +192,22 @@ class _SignupPageState extends State<SignupPage> {
 
           var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
           url = dowurl.toString();
-
-
+    
           await _crudFunctions.uploadUserInfo(
-            uid: _currentUser.uid,
-            name: this._name,
-            email: _currentUser.email,
-            location: this._location,
-            gender: this._gender,
-            url: url
-          );
+              uid: _currentUser.uid,
+              name: this._name,
+              email: _currentUser.email,
+              location: this._location,
+              gender: this._gender,
+              url: url);
 
           //FirebaseStorage.instance.ref().child(uid).putFile(_image);
 
           print(url);
-
+          this.setState(() {
+            isloading = false;
+          });
+          Fluttertoast.showToast(msg: 'SignUp Successful');
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (BuildContext context) {
             return HomePage(_currentUser);
@@ -313,7 +323,20 @@ class _SignupPageState extends State<SignupPage> {
                     height: 15,
                   ),
                   backButton(),
-                  SizedBox(height: 100)
+                  Center(
+                      child: isloading == true
+                          ? Container(
+                              color: Colors.white.withOpacity(0.8),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Theme.of(context).primaryColor)),
+                              ),
+                            )
+                          : Container()),
+                  SizedBox(
+                    height: 50,
+                  )
                 ],
               ),
             ),

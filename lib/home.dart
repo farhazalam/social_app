@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         body: TabBarView(
-          children: <Widget>[DashboardPage(), MessagePage(), ProfilePage(widget.user)],
+          children: <Widget>[DashboardPage(), MessagePage(widget.user), ProfilePage(widget.user)],
         ),
       ),
     );

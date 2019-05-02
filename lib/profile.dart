@@ -26,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget profileUiImage() {
     return Container(
       child: _userData['url'] == ''
-          ? Center(child: Text('Loading'))
+          ? CircularProgressIndicator()
           : Image.network(_userData['url'],height: 300,width: MediaQuery.of(context).size.width,fit: BoxFit.fitWidth,),
     decoration: BoxDecoration(color: Colors.deepOrange[100]),
     );
