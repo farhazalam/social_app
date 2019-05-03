@@ -24,34 +24,35 @@ class _ProfilePageState extends State<ProfilePage> {
   };
 
   Widget profileUiImage() {
-    return Container(alignment: Alignment.center,width: double.infinity,height: 270,
-      child: _userData['url'] == ''
-          ? CircularProgressIndicator(
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-            )
-          : CachedNetworkImage(
-              imageUrl: _userData['url'],
-              fadeOutCurve: Curves.bounceOut,
-              placeholder: (BuildContext context, url) {
-                Container(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).primaryColor),
-                  ),
-                  
-                );
-              },
+    return Container(
+      child: CachedNetworkImage(
+        placeholder: (context, url) => Container(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor),
+              ),
+              width: double.infinity,
+              height: 280.0,
+              padding: EdgeInsets.all(70.0),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+              ),
             ),
-      
-      decoration: BoxDecoration(color: Colors.deepOrange[800]),
+        imageUrl: _userData['url'],
+        width: double.infinity,
+        height: 280.0,
+        fit: BoxFit.cover,
+      ),
     );
   }
 
   Widget profileUiName() {
     return Container(
       child: Text(
-        _userData["name"],
+        _userData["name"].toUpperCase(),
         style: TextStyle(
             color: Colors.white,
             fontSize: 30,

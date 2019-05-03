@@ -1,12 +1,13 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import './firebase/CRUD.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EditPage extends StatefulWidget {
   final Map<String, dynamic> _userData;
@@ -25,7 +26,7 @@ class _EditPageState extends State<EditPage> {
   String id;
   final db = Firestore.instance;
   String urldata;
-  bool isloading=false;
+  bool isloading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, dynamic> _newUserData = {
     'name': '',
@@ -40,7 +41,7 @@ class _EditPageState extends State<EditPage> {
     if (image != null) {
       setState(() {
         _image = image;
-        isloading=true;
+        isloading = true;
       });
 
       await uploadImage();
@@ -51,14 +52,28 @@ class _EditPageState extends State<EditPage> {
     return Container(
       child: Stack(
         children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-              child:
-              CircleAvatar(
-                backgroundImage: NetworkImage(urldata),
-                radius: 62,
+          Center(
+            child: Material(
+              child: CachedNetworkImage(
+                placeholder: (context, url) => Container(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.0,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor),
+                      ),
+                      width: 125.0,
+                      height: 125.0,
+                      padding: EdgeInsets.all(15.0),
+                    ),
+                imageUrl: urldata,
+                width: 125.0,
+                height: 125.0,
+                fit: BoxFit.cover,
               ),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(100.0)),
+              clipBehavior: Clip.hardEdge,
+            ),
+          ),
           Container(
             child: FloatingActionButton(
               onPressed: () {
@@ -123,8 +138,9 @@ class _EditPageState extends State<EditPage> {
     StorageUploadTask uploadTask = ref.putFile(_image);
 
     var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+    Fluttertoast.showToast(msg: 'Upload Complete');
     setState(() {
-      isloading=false;
+      isloading = false;
       urldata = dowurl.toString();
     });
   }
@@ -132,6 +148,9 @@ class _EditPageState extends State<EditPage> {
   Future<Null> editData(BuildContext context) async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
+      setState(() {
+       isloading=true; 
+      });
       _currentUser = await FirebaseAuth.instance.currentUser();
 
       await _crudFunctions.updateUserName(
@@ -141,7 +160,9 @@ class _EditPageState extends State<EditPage> {
         newLocation: this._newUserData['location'],
         newUrl: this.urldata,
       );
-
+      setState(() {
+       isloading=false; 
+      });
       Navigator.of(context).pop();
     }
   }
@@ -150,7 +171,7 @@ class _EditPageState extends State<EditPage> {
   void initState() {
     super.initState();
     urldata = _userData['url'];
-    isloading=false;
+    isloading = false;
   }
 
   @override
@@ -177,26 +198,28 @@ class _EditPageState extends State<EditPage> {
         ),
         body: Form(
           key: _formKey,
-          child: Stack(children: <Widget>[ListView(
-              children: <Widget>[
-                SizedBox(
-                  height: 25,
-                ),
-                photoField(),
-                SizedBox(
-                  height: 25,
-                ),
-                nameField(),
-                locationField(),
-                genderField(),
-              ],
-            ),
-            buildLoading(),
+          child: Stack(
+            children: <Widget>[
+              ListView(
+                children: <Widget>[
+                  SizedBox(
+                    height: 25,
+                  ),
+                  photoField(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  nameField(),
+                  locationField(),
+                  genderField(),
+                ],
+              ),
+              buildLoading(),
             ],
-                       
           ),
         ));
   }
+
   Widget buildLoading() {
     return Positioned(
       child: isloading

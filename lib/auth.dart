@@ -17,11 +17,11 @@ class _LoginPageState extends State<LoginPage> {
   SharedPreferences prefs;
   bool isLoading = false;
   bool isLoggedIn = false;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     isSignedIn();
   }
 
@@ -222,41 +222,50 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
             child: Form(
               key: _formKey,
-              child: Column(
+              child: Stack(
                 children: <Widget>[
-                  _emailField(),
-                  SizedBox(
-                    height: 20.0,
+                  Column(
+                    children: <Widget>[
+                      _emailField(),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      _passwordField(),
+                      SizedBox(
+                        height: 70.0,
+                      ),
+                      _loginButton(),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      _signupButton(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
                   ),
-                  _passwordField(),
-                  SizedBox(
-                    height: 70.0,
-                  ),
-                  _loginButton(),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  _signupButton(),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                      child: isLoading == true
-                          ? Container(
-                              color: Colors.white.withOpacity(0.8),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Theme.of(context).primaryColor)),
-                              ),
-                            )
-                          : Container())
+                  buildLoading(),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildLoading() {
+    return Positioned(
+      child: isLoading
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor)),
+              ),
+              color: Colors.white.withOpacity(0.8),
+            )
+          : Container(),
     );
   }
 }

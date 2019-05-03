@@ -314,57 +314,66 @@ class _SignupPageState extends State<SignupPage> {
             padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
             child: Form(
               key: _formKey,
-              child: Column(
+              child: Stack(
                 children: <Widget>[
-                  SizedBox(
-                    height: 15,
+                  Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 15,
+                      ),
+                      photoField(),
+                      _nameField(),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      _emailField(),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      _passwordField(),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      _genderField(),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      _locationField(),
+                      SizedBox(
+                        height: 70.0,
+                      ),
+                      _confirmButton(),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      backButton(),
+                      
+                      SizedBox(
+                        height: 50,
+                      )
+                    ],
                   ),
-                  photoField(),
-                  _nameField(),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  _emailField(),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  _passwordField(),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  _genderField(),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  _locationField(),
-                  SizedBox(
-                    height: 70.0,
-                  ),
-                  _confirmButton(),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  backButton(),
-                  Center(
-                      child: isloading == true
-                          ? Container(
-                              color: Colors.white.withOpacity(0.8),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Theme.of(context).primaryColor)),
-                              ),
-                            )
-                          : Container()),
-                  SizedBox(
-                    height: 50,
-                  )
+                  buildLoading(),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+  Widget buildLoading() {
+    return Positioned(
+      child: isloading
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor)),
+              ),
+              color: Colors.white.withOpacity(0.8),
+            )
+          : Container(),
     );
   }
 }
