@@ -417,7 +417,7 @@ class ChatScreenState extends State<ChatScreen> {
                               Theme.of(context).primaryColor)));
                 } else {
                   listMessage = snapshot.data.documents;
-                  return ListView.builder(
+                  return ListView.builder(  
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) =>
                         buildItem(index, snapshot.data.documents[index]),

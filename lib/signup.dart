@@ -24,7 +24,11 @@ class _SignupPageState extends State<SignupPage> {
   CRUD _crudFunctions = CRUD();
   File _image;
   String url;
+  FirebaseUser user;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final FocusNode focusNode = FocusNode();
+  final TextEditingController textEditingController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
 
   Widget _designUI() {
     return Container(
@@ -77,24 +81,28 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Widget _passwordField() {
-    return TextFormField(
-      decoration: InputDecoration(
-          labelText: 'PASSWORD.',
-          labelStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.bold,
-              color: Colors.grey)),
-      obscureText: true,
-      validator: (String value) {
-        if (value.isEmpty || value.length < 6) {
-          return 'Password invalid';
-        }
-      },
-      onSaved: (value) {
-        setState(() {
-          _password = value;
-        });
-      },
+    return Container(
+      child: TextFormField(
+        controller: textEditingController,
+        focusNode: focusNode,
+        decoration: InputDecoration(
+            labelText: 'PASSWORD.',
+            labelStyle: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                color: Colors.grey)),
+        obscureText: true,
+        validator: (String value) {
+          if (value.isEmpty || value.length < 6) {
+            return 'Password invalid';
+          }
+        },
+        onSaved: (value) {
+          setState(() {
+            _password = value;
+          });
+        },
+      ),
     );
   }
 
@@ -186,13 +194,9 @@ class _SignupPageState extends State<SignupPage> {
             Fluttertoast.showToast(msg: 'Incorrect Details');
             print(e.toString());
           });
-          String uid = _currentUser.uid;
-          StorageReference ref = FirebaseStorage.instance.ref().child(uid);
-          StorageUploadTask uploadTask = ref.putFile(_image);
 
-          var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
-          url = dowurl.toString();
-    
+          user = _currentUser;
+
           await _crudFunctions.uploadUserInfo(
               uid: _currentUser.uid,
               name: this._name,
@@ -201,8 +205,7 @@ class _SignupPageState extends State<SignupPage> {
               gender: this._gender,
               url: url);
 
-          //FirebaseStorage.instance.ref().child(uid).putFile(_image);
-
+          if (_image != null) uploadImage();
           print(url);
           this.setState(() {
             isloading = false;
@@ -241,9 +244,20 @@ class _SignupPageState extends State<SignupPage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-    });
+    if (image != null) {
+      setState(() {
+        _image = image;
+      });
+    }
+  }
+
+  Future<Null> uploadImage() async {
+    String uid = user.uid;
+    StorageReference ref = FirebaseStorage.instance.ref().child(uid);
+    StorageUploadTask uploadTask = ref.putFile(_image);
+
+    var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+    url = dowurl.toString();
   }
 
   Widget photoField() {
@@ -255,7 +269,7 @@ class _SignupPageState extends State<SignupPage> {
             child: CircleAvatar(
               backgroundColor: Colors.orange,
               backgroundImage: _image == null
-                  ? AssetImage('assets/dp.jpg')
+                  ? AssetImage('assets/download.png')
                   : FileImage(_image),
               radius: 62,
             ),
@@ -282,10 +296,18 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    url =
+        'https://firebasestorage.googleapis.com/v0/b/social-app-7012e.appspot.com/o/download.png?alt=media&token=1a643f92-d5e8-402f-aa4f-d1390eddbb5a';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: ListView(
+        controller: scrollController,
         children: <Widget>[
           _designUI(),
           Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
+
 
 import './auth.dart';
 import './signup.dart';
@@ -7,6 +8,10 @@ import './signup.dart';
 
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    
+    statusBarColor: Colors.deepOrange[800]
+  ));
   runApp(MyApp());
 }
 
@@ -18,11 +23,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  final FirebaseMessaging _messaging=FirebaseMessaging();
+ 
   @override
   void initState() {
      super.initState();
-    _messaging.getToken().then((token){print(token);});
+   
   }
   @override
   Widget build(BuildContext context) {
@@ -33,8 +38,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (BuildContext context) => LoginPage(),
         '/signup': (BuildContext context) => SignupPage(),
-       // '/messagepage': (BuildContext context) => MessagePage(),
-        // '/editpage': (BuildContext context) => EditPage(),
+       
       },
 
     );

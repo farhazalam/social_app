@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import './edit.dart';
-
 
 class ProfilePage extends StatefulWidget {
   final FirebaseUser user;
@@ -24,11 +24,27 @@ class _ProfilePageState extends State<ProfilePage> {
   };
 
   Widget profileUiImage() {
-    return Container(
+    return Container(alignment: Alignment.center,width: double.infinity,height: 270,
       child: _userData['url'] == ''
-          ? CircularProgressIndicator()
-          : Image.network(_userData['url'],height: 300,width: MediaQuery.of(context).size.width,fit: BoxFit.fitWidth,),
-    decoration: BoxDecoration(color: Colors.deepOrange[100]),
+          ? CircularProgressIndicator(
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+            )
+          : CachedNetworkImage(
+              imageUrl: _userData['url'],
+              fadeOutCurve: Curves.bounceOut,
+              placeholder: (BuildContext context, url) {
+                Container(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor),
+                  ),
+                  
+                );
+              },
+            ),
+      
+      decoration: BoxDecoration(color: Colors.deepOrange[800]),
     );
   }
 
@@ -167,7 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   _userData['gender'] = snapshot.data['gender'];
                   _userData['url'] = snapshot.data['url'];
                   return ListView(
-                    //crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       profileUi(),
                       emailDisplay(),

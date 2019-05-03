@@ -12,7 +12,7 @@ class CRUD {
       @required String gender,
       @required String url}) async {
     Map<String, dynamic> _userData = {
-      'id':uid,
+      'id': uid,
       'name': name,
       'email': email,
       'location': location,
@@ -39,5 +39,11 @@ class CRUD {
         .collection("USER")
         .document(uid)
         .setData(_newData, merge: true);
+  }
+
+  Future<Null> updateToken(
+      {@required String token, @required String uid}) async {
+    Map<String, String> _tokendata = {'tokendata': token};
+    await database.collection('TOKEN').document(uid).setData(_tokendata);
   }
 }

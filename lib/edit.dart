@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import './firebase/CRUD.dart';
 
+
 class EditPage extends StatefulWidget {
   final Map<String, dynamic> _userData;
 
@@ -23,7 +24,8 @@ class _EditPageState extends State<EditPage> {
   File _image;
   String id;
   final db = Firestore.instance;
-
+  String urldata;
+  bool isloading=false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, dynamic> _newUserData = {
     'name': '',
@@ -32,15 +34,17 @@ class _EditPageState extends State<EditPage> {
   };
   CRUD _crudFunctions = CRUD();
   FirebaseUser _currentUser;
-  bool isClicked = false;
-  String urldata;
+
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-      // isClicked = true;
-      //urldata=_userData['url'];
-    });
+    if (image != null) {
+      setState(() {
+        _image = image;
+        isloading=true;
+      });
+
+      await uploadImage();
+    }
   }
 
   Widget photoField() {
@@ -49,11 +53,12 @@ class _EditPageState extends State<EditPage> {
         children: <Widget>[
           Container(
             alignment: Alignment.center,
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(_userData['url']),
-              radius: 62,
-            ),
-          ),
+              child:
+              CircleAvatar(
+                backgroundImage: NetworkImage(urldata),
+                radius: 62,
+              ),
+              ),
           Container(
             child: FloatingActionButton(
               onPressed: () {
@@ -111,22 +116,24 @@ class _EditPageState extends State<EditPage> {
     );
   }
 
+  Future<Null> uploadImage() async {
+    _currentUser = await FirebaseAuth.instance.currentUser();
+    String uid = _currentUser.uid;
+    StorageReference ref = FirebaseStorage.instance.ref().child(uid);
+    StorageUploadTask uploadTask = ref.putFile(_image);
+
+    var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+    setState(() {
+      isloading=false;
+      urldata = dowurl.toString();
+    });
+  }
+
   Future<Null> editData(BuildContext context) async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       _currentUser = await FirebaseAuth.instance.currentUser();
 
-      String uid = _currentUser.uid;
-      StorageReference ref = FirebaseStorage.instance.ref().child(uid);
-      StorageUploadTask uploadTask = ref.putFile(_image);
-
-      var dowurl = await (await uploadTask.onComplete).ref.getDownloadURL();
-      urldata = dowurl.toString();
-
-      // if(isClicked==false)
-      // {
-      //   urldata=_userData['url'];
-      // }
       await _crudFunctions.updateUserName(
         uid: _currentUser.uid,
         newName: this._newUserData['name'],
@@ -137,6 +144,13 @@ class _EditPageState extends State<EditPage> {
 
       Navigator.of(context).pop();
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    urldata = _userData['url'];
+    isloading=false;
   }
 
   @override
@@ -163,20 +177,38 @@ class _EditPageState extends State<EditPage> {
         ),
         body: Form(
           key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              SizedBox(
-                height: 25,
-              ),
-              photoField(),
-              SizedBox(
-                height: 25,
-              ),
-              nameField(),
-              locationField(),
-              genderField(),
+          child: Stack(children: <Widget>[ListView(
+              children: <Widget>[
+                SizedBox(
+                  height: 25,
+                ),
+                photoField(),
+                SizedBox(
+                  height: 25,
+                ),
+                nameField(),
+                locationField(),
+                genderField(),
+              ],
+            ),
+            buildLoading(),
             ],
+                       
           ),
         ));
+  }
+  Widget buildLoading() {
+    return Positioned(
+      child: isloading
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor)),
+              ),
+              color: Colors.white.withOpacity(0.8),
+            )
+          : Container(),
+    );
   }
 }

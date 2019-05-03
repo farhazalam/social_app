@@ -17,10 +17,11 @@ class _LoginPageState extends State<LoginPage> {
   SharedPreferences prefs;
   bool isLoading = false;
   bool isLoggedIn = false;
-
+  
   @override
   void initState() {
     super.initState();
+    
     isSignedIn();
   }
 

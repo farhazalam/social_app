@@ -33,7 +33,7 @@ class _MessagePageState extends State<MessagePage> {
                 );
               } else {
                 return ListView.builder(
-                  padding: EdgeInsets.all(10.0),
+                  padding: EdgeInsets.all(7.0),
                   itemBuilder: (context, index) =>
                       buildItem(context, snapshot.data.documents[index]),
                   itemCount: snapshot.data.documents.length,
@@ -102,7 +102,7 @@ class _MessagePageState extends State<MessagePage> {
             }));
           },
           color: Colors.grey[200],
-          padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 7.0, 20.0, 7.0),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -112,16 +112,3 @@ class _MessagePageState extends State<MessagePage> {
   }
 }
 
-// import 'package:flutter/material.dart';
-
-// class MessagePage extends StatefulWidget {
-//   @override
-//   _MessagePageState createState() => _MessagePageState();
-// }
-
-// class _MessagePageState extends State<MessagePage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(body: Center(child: Text('This is The dashboard Page'),),);
-//   }
-// }
