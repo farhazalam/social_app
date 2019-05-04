@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:cached_network_image/cached_network_image.dart';
+
+
 import './chat.dart';
+import './dashboard.dart';
 
 class MessagePage extends StatefulWidget {
   final FirebaseUser user;
@@ -14,12 +16,12 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
+  DashboardPageState appbar=DashboardPageState();
+  String title='Messages';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Chat Screen'),
-        ),
+        appBar: appbar.customAppBar(title),
         body: Container(
           child: StreamBuilder(
             stream: Firestore.instance.collection('USER').snapshots(),

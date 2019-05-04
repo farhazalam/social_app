@@ -27,12 +27,14 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       child: CachedNetworkImage(
         placeholder: (context, url) => Container(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).primaryColor),
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).primaryColor),
+                ),
               ),
-              width: double.infinity,
-              height: 280.0,
+              width: 200,
+              height: 200.0,
               padding: EdgeInsets.all(70.0),
               decoration: BoxDecoration(
                 color: Colors.grey[200],

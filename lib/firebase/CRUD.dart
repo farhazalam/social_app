@@ -44,6 +44,6 @@ class CRUD {
   Future<Null> updateToken(
       {@required String token, @required String uid}) async {
     Map<String, String> _tokendata = {'tokendata': token};
-    await database.collection('TOKEN').document(uid).setData(_tokendata);
+    await database.collection('USER').document(uid).setData(_tokendata,merge: true);
   }
 }
