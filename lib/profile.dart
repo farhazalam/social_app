@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import './edit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProfilePage extends StatefulWidget {
   final FirebaseUser user;
@@ -22,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
     'gender': '',
     'url': ''
   };
-
+  bool isLoading = false;
   Widget profileUiImage() {
     return Container(
       child: CachedNetworkImage(
@@ -54,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget profileUiName() {
     return Container(
       child: Text(
-        _userData["name"].toUpperCase(),
+        _userData['name'] == null ? '' : _userData["name"].toUpperCase(),
         style: TextStyle(
             color: Colors.white,
             fontSize: 30,
@@ -103,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         subtitle: Text(
-          _userData['email'],
+          _userData['email'] == null ? '' : _userData['email'],
           style: TextStyle(fontSize: 16),
         ),
       ),
@@ -119,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         subtitle: Text(
-          _userData['location'],
+          _userData['location'] == null ? '' : _userData['location'],
           style: TextStyle(fontSize: 16),
         ),
       ),
@@ -135,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         subtitle: Text(
-          _userData['gender'],
+          _userData['gender'] == null ? '' : _userData['gender'],
           style: TextStyle(fontSize: 16),
         ),
       ),
@@ -163,6 +164,60 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget buildLoading() {
+    return Positioned(
+      child: isLoading
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor)),
+              ),
+              color: Colors.white.withOpacity(0.8),
+            )
+          : Container(),
+    );
+  }
+
+  Widget emailVerificationCheck() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Container(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Text(
+              'Email not Verified ',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+            )),
+        Container(
+          padding: EdgeInsets.only(bottom: 20),
+          child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  isLoading = true;
+                });
+                widget.user.sendEmailVerification();
+                setState(() {
+                  isLoading = false;
+                  Fluttertoast.showToast(msg: 'Email Sent Successfully');
+                });
+              },
+              child: Text(
+                'click Here ',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              )),
+        ),
+        Container(
+          child: Text(
+            'to resend.',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          ),
+          padding: EdgeInsets.only(bottom: 20),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,25 +240,32 @@ class _ProfilePageState extends State<ProfilePage> {
                   _userData['location'] = snapshot.data['location'];
                   _userData['gender'] = snapshot.data['gender'];
                   _userData['url'] = snapshot.data['url'];
-                  return ListView(
+                  return Stack(
                     children: <Widget>[
-                      profileUi(),
-                      emailDisplay(),
-                      SizedBox(
-                        height: 04,
+                      ListView(
+                        children: <Widget>[
+                          profileUi(),
+                          emailDisplay(),
+                          SizedBox(
+                            height: 04,
+                          ),
+                          locationDisplay(),
+                          SizedBox(
+                            height: 05,
+                          ),
+                          genderDisplay(),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          logoutButton(),
+                        ],
                       ),
-                      locationDisplay(),
-                      SizedBox(
-                        height: 05,
-                      ),
-                      genderDisplay(),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      logoutButton(),
+                      buildLoading()
                     ],
                   );
               }
-            }));
+            }),
+        bottomSheet:
+            widget.user.isEmailVerified ? null : emailVerificationCheck());
   }
 }

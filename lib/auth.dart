@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import './forgotpass.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -215,6 +217,43 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Widget buildLoading() {
+    return Positioned(
+      child: isLoading
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor)),
+              ),
+              color: Colors.white.withOpacity(0.8),
+            )
+          : Container(),
+    );
+  }
+
+  Widget buildForgotPassword() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (BuildContext context) {
+              return ForgotPasswordPage();
+            }));
+          },
+          child: Container(
+              padding: EdgeInsets.only(bottom: 20),
+              child: Text(
+                'Forget password?',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              )),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,7 +286,6 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: 10,
                       ),
-                      
                     ],
                   ),
                   buildLoading(),
@@ -257,21 +295,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildLoading() {
-    return Positioned(
-      child: isLoading
-          ? Container(
-              child: Center(
-                child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).primaryColor)),
-              ),
-              color: Colors.white.withOpacity(0.8),
-            )
-          : Container(),
+      bottomSheet: buildForgotPassword(),
     );
   }
 }

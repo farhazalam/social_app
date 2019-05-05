@@ -38,6 +38,7 @@ class DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customAppBar(title),
+      
     );
   }
 }

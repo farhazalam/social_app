@@ -197,6 +197,10 @@ class _SignupPageState extends State<SignupPage> {
 
           user = _currentUser;
 
+          await user.sendEmailVerification().catchError((e) {
+            print(e);
+          });
+
           await _crudFunctions.uploadUserInfo(
               uid: _currentUser.uid,
               name: this._name,
@@ -210,7 +214,7 @@ class _SignupPageState extends State<SignupPage> {
           this.setState(() {
             isloading = false;
           });
-          Fluttertoast.showToast(msg: 'SignUp Successful');
+          Fluttertoast.showToast(msg: 'SignUp Successful and verification email sent.');
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (BuildContext context) {
             return HomePage(_currentUser);
@@ -347,7 +351,6 @@ class _SignupPageState extends State<SignupPage> {
                         height: 15,
                       ),
                       backButton(),
-                      
                       SizedBox(
                         height: 50,
                       )
@@ -362,6 +365,7 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
+
   Widget buildLoading() {
     return Positioned(
       child: isloading

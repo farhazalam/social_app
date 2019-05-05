@@ -65,7 +65,7 @@ class _MessagePageState extends State<MessagePage> {
                         width: 50.0,
                         height: 50.0,
                         padding: EdgeInsets.all(15.0),
-                      ),
+                      ),errorWidget: (context,s,url)=>Container(),
                   imageUrl: document['url'],
                   width: 50.0,
                   height: 50.0,
