@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import './helpers/ensure_visible.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -176,65 +177,77 @@ class DashboardPageState extends State<DashboardPage> {
 
   Widget buildItem(BuildContext context, DocumentSnapshot document) {
     return Container(
-      child: Row(
+      padding: EdgeInsets.only(bottom: 7),
+      child: Column(
         children: <Widget>[
-          Material(
-            child: CachedNetworkImage(
-              placeholder: (context, url) => Container(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 1.0,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor),
-                    ),
-                    width: 50.0,
-                    height: 50.0,
-                    padding: EdgeInsets.all(15.0),
-                  ),
-              errorWidget: (context, s, url) => Container(),
-              imageUrl: document['url'],
-              width: 50.0,
-              height: 50.0,
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(25.0)),
-            clipBehavior: Clip.hardEdge,
+          Divider(
+            height: 5,
           ),
-          Column(
+          Row(
             children: <Widget>[
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        '${document['name']}',
-                        style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+              Material(
+                child: CachedNetworkImage(
+                  placeholder: (context, url) => Container(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.0,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor),
+                        ),
+                        width: 50.0,
+                        height: 50.0,
+                        padding: EdgeInsets.all(15.0),
                       ),
-                
-                      margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-                    ),
-                  ],
-                ),  
-          
-              ),
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        '${document['content']}',maxLines: 5,
-                        style: TextStyle(
-                           
-                            fontSize: 18),
-                      ),
-                      alignment: Alignment.centerLeft,
-                      margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
-                    ),
-                  ],
+                  errorWidget: (context, s, url) => Container(),
+                  imageUrl: document['url'],
+                  width: 42.0,
+                  height: 42.0,
+                  fit: BoxFit.cover,
                 ),
-                margin: EdgeInsets.only(left: 10.0),
+                borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                clipBehavior: Clip.hardEdge,
               ),
+              SizedBox(
+                width: 10,
+              ),
+              Column(
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      '${document['name']}',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 2.0),
+                  ),
+                  Container(
+                    child: Text(
+                      DateFormat('dd MMM kk:mm').format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              int.parse(document['time']))),
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.0,
+                          fontStyle: FontStyle.italic),
+                    ),
+                  )
+                ],
+              )
             ],
-          )
+          ),
+          SizedBox(
+            height: 7,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(right: 5),
+            child: Text(
+              '${document['content']}',
+              maxLines: 5,
+              style: TextStyle(fontSize: 18),
+            ),
+            alignment: Alignment.centerLeft,
+            margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
+          ),
         ],
       ),
     );
