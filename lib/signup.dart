@@ -214,7 +214,8 @@ class _SignupPageState extends State<SignupPage> {
           this.setState(() {
             isloading = false;
           });
-          Fluttertoast.showToast(msg: 'SignUp Successful and verification email sent.');
+          Fluttertoast.showToast(
+              msg: 'SignUp Successful and verification email sent.');
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (BuildContext context) {
             return HomePage(_currentUser);
@@ -309,59 +310,64 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: ListView(
-        controller: scrollController,
-        children: <Widget>[
-          _designUI(),
-          Container(
-            padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-            child: Form(
-              key: _formKey,
-              child: Stack(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 15,
-                      ),
-                      photoField(),
-                      _nameField(),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      _emailField(),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      _passwordField(),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      _genderField(),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      _locationField(),
-                      SizedBox(
-                        height: 70.0,
-                      ),
-                      _confirmButton(),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      backButton(),
-                      SizedBox(
-                        height: 50,
-                      )
-                    ],
-                  ),
-                  buildLoading(),
-                ],
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: ListView(
+          controller: scrollController,
+          children: <Widget>[
+            _designUI(),
+            Container(
+              padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
+              child: Form(
+                key: _formKey,
+                child: Stack(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 15,
+                        ),
+                        photoField(),
+                        _nameField(),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        _emailField(),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        _passwordField(),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        _genderField(),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        _locationField(),
+                        SizedBox(
+                          height: 70.0,
+                        ),
+                        _confirmButton(),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        backButton(),
+                        SizedBox(
+                          height: 50,
+                        )
+                      ],
+                    ),
+                    buildLoading(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

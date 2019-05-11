@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 
 class CRUD {
   Firestore database = Firestore.instance;
@@ -44,6 +45,27 @@ class CRUD {
   Future<Null> updateToken(
       {@required String token, @required String uid}) async {
     Map<String, String> _tokendata = {'tokendata': token};
-    await database.collection('USER').document(uid).setData(_tokendata,merge: true);
+    await database
+        .collection('USER')
+        .document(uid)
+        .setData(_tokendata, merge: true);
+  }
+
+  Future<Null> uploadPost(
+      {@required String uid,
+      @required String content,
+      @required int type,@required name,@required url}) async {
+    Map<String, dynamic> _uploadData = {
+      'id': uid,
+      'content': content,
+      'type': type,
+      'time': DateTime.now().millisecondsSinceEpoch.toString(),
+      'name':name,
+      'url':url,
+    };
+    await Firestore.instance
+        .collection('POSTS')
+        .document(DateTime.now().millisecondsSinceEpoch.toString())
+        .setData(_uploadData);
   }
 }

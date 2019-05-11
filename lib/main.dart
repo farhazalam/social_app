@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
+import './splash.dart';
 import './auth.dart';
 import './signup.dart';
 
@@ -36,9 +36,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (BuildContext context) => LoginPage(),
+        '/': (BuildContext context) => SplashPage(),
         '/signup': (BuildContext context) => SignupPage(),
-       
+        '/login':(BuildContext context) => LoginPage(),
       },
 
     );

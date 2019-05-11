@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/animation.dart';
 
 import './forgotpass.dart';
 
@@ -12,18 +13,23 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   String _email = '';
   String _password = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   SharedPreferences prefs;
   bool isLoading = false;
   bool isLoggedIn = false;
-
+  Animation animation;
+  AnimationController animationController;
+  String name;
+  String url;
   @override
   void initState() {
     isSignedIn();
     super.initState();
+    
   }
 
   Future<FirebaseUser> getUser() async {
@@ -167,6 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   );
                 } else {
+                  print(snapshot.data['name']);
                   prefs.setString('id', snapshot.data['id']);
                   prefs.setString('name', snapshot.data['name']);
                   prefs.setString('url', snapshot.data['url']);
@@ -258,42 +265,47 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _topdesignUI(),
-          Container(
-            padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
-            child: Form(
-              key: _formKey,
-              child: Stack(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      _emailField(),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      _passwordField(),
-                      SizedBox(
-                        height: 70.0,
-                      ),
-                      _loginButton(),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      _signupButton(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                  buildLoading(),
-                ],
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+
+        onTap: (){FocusScope.of(context).requestFocus(new FocusNode());},
+              child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _topdesignUI(),
+            Container(
+              padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
+              child: Form(
+                key: _formKey,
+                child: Stack(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        _emailField(),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        _passwordField(),
+                        SizedBox(
+                          height: 70.0,
+                        ),
+                        _loginButton(),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        _signupButton(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                    buildLoading(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomSheet: buildForgotPassword(),
     );

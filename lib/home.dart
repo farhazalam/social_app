@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,12 +19,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   CRUD tokencrud = new CRUD();
+  String name;
+  String url;
   @override
   void initState() {
     super.initState();
     _firebaseMessaging.getToken().then((token) {
       tokencrud.updateToken(token: token, uid: widget.user.uid);
     });
+
+    
   }
 
   @override
@@ -51,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: <Widget>[
-            DashboardPage(),
+            DashboardPage(widget.user),
             MessagePage(widget.user),
             ProfilePage(widget.user)
           ],
