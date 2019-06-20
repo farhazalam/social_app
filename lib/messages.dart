@@ -100,6 +100,7 @@ class _MessagePageState extends State<MessagePage> {
                 user: widget.user,
                 friendId: document.documentID,
                friendImage: document['url'],
+               friendName: document['name'],
               );
             }));
           },

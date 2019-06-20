@@ -9,31 +9,60 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-
 class Chat extends StatelessWidget {
   final String friendId;
   final String friendImage;
+  final String friendName;
   final FirebaseUser user;
   Chat(
       {@required this.user,
       Key key,
       @required this.friendId,
-      @required this.friendImage})
+      @required this.friendImage,
+      @required this.friendName})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(
-          'CHAT BOX',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
+          title: Row(
+        children: <Widget>[
+          Material(
+            child: CachedNetworkImage(
+              placeholder: (context, url) => Container(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1.0,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).primaryColor),
+                    ),
+                    width: 10.0,
+                    height: 50.0,
+                  
+                  ),
+              errorWidget: (context, s, url) => Container(),
+              imageUrl: friendImage,
+              width: 42.0,
+              height: 42.0,
+              fit: BoxFit.cover,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(35.0)),
+            clipBehavior: Clip.hardEdge,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          new Text(
+            '$friendName',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ],
+      )),
       body: new ChatScreen(
         friendId: friendId,
         friendImage: friendImage,
         user: user,
+        friendName: friendName,
       ),
     );
   }
@@ -42,26 +71,32 @@ class Chat extends StatelessWidget {
 class ChatScreen extends StatefulWidget {
   final String friendId;
   final String friendImage;
+  final String friendName;
   final FirebaseUser user;
   ChatScreen(
       {@required this.user,
       Key key,
       @required this.friendId,
-      @required this.friendImage})
+      @required this.friendImage,
+      @required this.friendName})
       : super(key: key);
 
   @override
-  State createState() =>
-      new ChatScreenState(friendId: friendId, friendImage: friendImage);
+  State createState() => new ChatScreenState(
+      friendId: friendId, friendImage: friendImage, friendName: friendName);
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  ChatScreenState({Key key, @required this.friendId, @required this.friendImage});
+  ChatScreenState(
+      {Key key,
+      @required this.friendId,
+      @required this.friendImage,
+      @required this.friendName});
 
   String friendId;
   String friendImage;
   String id;
-
+  String friendName;
   var listMessage;
   String groupChatId;
 
@@ -417,7 +452,7 @@ class ChatScreenState extends State<ChatScreen> {
                               Theme.of(context).primaryColor)));
                 } else {
                   listMessage = snapshot.data.documents;
-                  return ListView.builder(  
+                  return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) =>
                         buildItem(index, snapshot.data.documents[index]),
