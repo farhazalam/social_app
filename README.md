@@ -15,8 +15,4 @@ This app is still under development and I will try my best to add new features.
   - profile page
 
 ## Screenshots
-<img src="screenshots/screenshot1.jpeg" width="150" height="300">    <img src="screenshots/screenshot2.jpeg" width="150" height="300"> 
-
-<img src="screenshots/screenshot3.jpeg" width="150" height="300">    <img src="screenshots/screenshot4.jpeg" width="150" height="300"> 
-
-<img src="screenshots/screenshot5.jpeg" width="150" height="300">
+<img src="screenshots/screenshot1.png" width="150" height="300">    <img src="screenshots/screenshot2.png" width="150" height="300">   <img src="screenshots/screenshot3.png" width="150" height="300">    <img src="screenshots/screenshot4.png" width="150" height="300">  <img src="screenshots/screenshot5.png" width="150" height="300">
