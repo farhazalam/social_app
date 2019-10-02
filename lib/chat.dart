@@ -24,8 +24,8 @@ class Chat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
+    return Scaffold(
+      appBar: AppBar(
           title: Row(
         children: <Widget>[
           Material(
@@ -52,13 +52,13 @@ class Chat extends StatelessWidget {
           SizedBox(
             width: 10,
           ),
-          new Text(
+         Text(
             '$friendName',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ],
       )),
-      body: new ChatScreen(
+      body:ChatScreen(
         friendId: friendId,
         friendImage: friendImage,
         user: user,
@@ -384,10 +384,10 @@ class ChatScreenState extends State<ChatScreen> {
       child: Row(
         children: <Widget>[
           Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              child: new IconButton(
-                icon: new Icon(Icons.image),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 1.0),
+              child: IconButton(
+                icon: Icon(Icons.image),
                 onPressed: getImage,
                 color: Theme.of(context).primaryColor,
               ),
@@ -409,10 +409,10 @@ class ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 8.0),
-              child: new IconButton(
-                icon: new Icon(Icons.send),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 8.0),
+              child: IconButton(
+                icon: Icon(Icons.send),
                 onPressed: () => onSendMessage(textEditingController.text, 0),
                 color: Theme.of(context).primaryColor,
               ),
@@ -423,9 +423,9 @@ class ChatScreenState extends State<ChatScreen> {
       ),
       width: double.infinity,
       height: 50.0,
-      decoration: new BoxDecoration(
-          border: new Border(
-              top: new BorderSide(color: Colors.grey[200], width: 0.5)),
+      decoration: BoxDecoration(
+          border: Border(
+              top: BorderSide(color: Colors.grey[200], width: 0.5)),
           color: Colors.white),
     );
   }

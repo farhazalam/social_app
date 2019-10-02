@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-
 import './chat.dart';
 import './dashboard.dart';
 
@@ -16,8 +15,8 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
-  DashboardPageState appbar=DashboardPageState();
-  String title='Messages';
+  DashboardPageState appbar = DashboardPageState();
+  String title = 'Messages';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,13 +49,15 @@ class _MessagePageState extends State<MessagePage> {
     if (document['id'] == widget.user.uid) {
       return Container();
     } else {
-      return Container(
-        child: FlatButton(
-          child: Row(
-            children: <Widget>[
-              Material(
-                child: CachedNetworkImage(
-                  placeholder: (context, url) => Container(
+      return Column(
+        children: <Widget>[
+          Container(
+            child: FlatButton(
+              child: Row(
+                children: <Widget>[
+                  Material(
+                    child: CachedNetworkImage(
+                      placeholder: (context, url) => Container(
                         child: CircularProgressIndicator(
                           strokeWidth: 1.0,
                           valueColor: AlwaysStoppedAnimation<Color>(
@@ -65,53 +66,53 @@ class _MessagePageState extends State<MessagePage> {
                         width: 50.0,
                         height: 50.0,
                         padding: EdgeInsets.all(15.0),
-                      ),errorWidget: (context,s,url)=>Container(),
-                  imageUrl: document['url'],
-                  width: 50.0,
-                  height: 50.0,
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                clipBehavior: Clip.hardEdge,
-              ),
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        '${document['name']}',
-                        style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 18),
                       ),
-                      alignment: Alignment.centerLeft,
-                      margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
+                      errorWidget: (context, s, url) => Container(),
+                      imageUrl: document['url'],
+                      width: 50.0,
+                      height: 50.0,
+                      fit: BoxFit.cover,
                     ),
-                  ],
-                ),
-                margin: EdgeInsets.only(left: 10.0),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                    clipBehavior: Clip.hardEdge,
+                  ),
+                  Container(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          child: Text(
+                            '${document['name']}',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 18),
+                          ),
+                          alignment: Alignment.centerLeft,
+                          margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
+                        ),
+                      ],
+                    ),
+                    margin: EdgeInsets.only(left: 10.0),
+                  ),
+                ],
               ),
-            ],
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  return Chat(
+                    user: widget.user,
+                    friendId: document.documentID,
+                    friendImage: document['url'],
+                    friendName: document['name'],
+                  );
+                }));
+              },
+              padding: EdgeInsets.fromLTRB(20.0, 7.0, 20.0, 0.0),
+            ),
+            margin: EdgeInsets.only(bottom: 5.0, left: 5.0, right: 5.0),
           ),
-          onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (BuildContext context) {
-              return Chat(
-                user: widget.user,
-                friendId: document.documentID,
-               friendImage: document['url'],
-               friendName: document['name'],
-              );
-            }));
-          },
-          color: Colors.grey[200],
-          padding: EdgeInsets.fromLTRB(20.0, 7.0, 20.0, 7.0),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        ),
-        margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
+      
+        ],
       );
     }
   }
 }
-

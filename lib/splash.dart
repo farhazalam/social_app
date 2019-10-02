@@ -16,7 +16,7 @@ class _SplashPageState extends State<SplashPage>
         AnimationController(duration: Duration(seconds: 2), vsync: this);
 
     _animation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+        CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
 
     _animation.addListener(() {
       if (_animation.status == AnimationStatus.completed) {
@@ -31,20 +31,31 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.deepOrange[400],
+    return Scaffold(
       body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.centerLeft,end: Alignment.centerRight,
-                  colors: [Color(0xffee0979), Color(0xffff6a00)])),
-          child: Text(
-            'All Friends',
-            style: TextStyle(fontSize: 30),
+          child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/handshake.png',
+            height: 60,
+            width: 60,
           ),
-          height: _animation.value * 100,
-          width: _animation.value * 100,
-        ),
-      ),
+          SizedBox(
+            width: 5,
+          ),
+          Container(
+            height: 60*_animation.value,
+            width: 150*_animation.value,
+            child: Image.asset(
+              'assets/ss.png',
+              height: 70,
+              width: 150,
+            ),
+          ),
+        ],
+      )),
     );
   }
 }

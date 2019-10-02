@@ -48,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
         width: double.infinity,
         height: 280.0,
         fit: BoxFit.cover,
+        
       ),
     );
   }

@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginPage>
             FirebaseUser _currentUser = await FirebaseAuth.instance
                 .signInWithEmailAndPassword(email: _email, password: _password)
                 .catchError((e) {
-              Fluttertoast.showToast(msg: 'Enter Correct Details');
+              Fluttertoast.showToast(msg: 'Enter Correct Details',);
               this.setState(() {
                 isLoading = false;
               });
