@@ -1,16 +1,22 @@
-# social_app
+# Handshake
 
-A new Flutter application.
+[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
-## Getting Started
+Handshake is a Social Media App made using Flutter.
 
-This project is a starting point for a Flutter application.
+## Note
+This app is still under development and I will try my best to add new features.
 
-A few resources to get you started if this is your first Flutter project:
+## Features!
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
+  - News Feed
+  - Fully Functioning Chat page
+  - Notification on new chat recieve
+  - profile page
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+## Screenshots
+<img src="screenshots/screenshot1.jpeg" width="150" height="300">    <img src="screenshots/screenshot2.jpeg" width="150" height="300"> 
+
+<img src="screenshots/screenshot3.jpeg" width="150" height="300">    <img src="screenshots/screenshot4.jpeg" width="150" height="300"> 
+
+<img src="screenshots/screenshot5.jpeg" width="150" height="300">
